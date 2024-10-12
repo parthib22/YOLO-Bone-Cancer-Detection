@@ -4,22 +4,19 @@ import os
 from ultralytics import YOLO
 import cv2
 import torch
+import numpy as np
 
 # Load the YOLOv8 model
 try:
     model = YOLO("runs/classify/train/weights/best.pt")  # Update with the correct path
 except Exception as e:
-    model = YOLO("best.pt")
+    model = YOLO("models/best.pt")
 
 dataset_folder = (
     "bone-cancer-detection--1/test/cancer"  # Update with your dataset folder path
 )
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# prompt: predict the images using yolo v8 from dataset_folder, refer from the above codes. also find the final prediction percentage of both the classes.
-
-import numpy as np
 
 results = model.predict(source=dataset_folder, conf=0.25, device=device, verbose=False)
 

@@ -1,6 +1,8 @@
-# Manual folders
+# Manual
 runs/
 bone-cancer-detection--1/
+
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
