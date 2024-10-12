@@ -21,13 +21,13 @@ This project uses YOLOv8 for bone cancer detection in medical images. It demonst
 1. Clone this repository:
 
    ```
-   git clone https://github.com/your-username/yolo-bone-cancer-detection.git
-   cd yolo-bone-cancer-detection
+   git clone https://github.com/parthib22/yolov8_bone_cancer_detection.git
+   cd yolov8-bone-cancer-detection
    ```
 
 2. Install the required packages:
    ```
-   pip install roboflow ultralytics torch
+   pip install roboflow ultralytics torch numpy python-dotenv
    ```
 
 ## Usage
@@ -52,7 +52,7 @@ To train the YOLOv8 model:
 from ultralytics import YOLO
 
 # Load a pretrained YOLOv8 classification model
-model = YOLO('yolov8n-cls.pt')
+model = YOLO('models/yolov8n-cls.pt')
 
 # Train the model with your custom dataset
 model.train(data='bone-cancer-detection--1', epochs=50, imgsz=224, batch=16)
@@ -69,7 +69,7 @@ import cv2
 import numpy as np
 
 # Load the trained model
-model = YOLO('runs/classify/train/weights/best.pt')
+model = YOLO('models/best.pt')
 
 # Specify the path to your test images
 dataset_folder = 'bone-cancer-detection--1/test/cancer'
