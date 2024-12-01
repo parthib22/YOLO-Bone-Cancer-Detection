@@ -47,11 +47,6 @@ This project uses YOLOv8 for bone cancer detection in medical images. It demonst
       .\venv\Scripts\activate
       ```
 
-      Install required packages:
-      ```powershell
-         pip install -r requirements.txt
-      ```
-
    - ### _Linux_
 
       Install system dependencies:
