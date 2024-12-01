@@ -98,7 +98,9 @@ This project uses YOLOv8 for bone cancer detection in medical images. It demonst
 
 ### Dataset
 
-This project uses a dataset from Roboflow. To download the dataset:
+This project uses a dataset from Roboflow. To download the dataset.
+
+Get a private API key from [Roboflow](https://app.roboflow.com/)
 
 ```python
 from roboflow import Roboflow
