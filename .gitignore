@@ -2,8 +2,10 @@
 
 runs/
 bone-cancer-detection--1/
+classification_results/
 .venv/
 
 # files
 
 .env
+models/yolov8n-cls.pt

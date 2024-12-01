@@ -1,53 +1,40 @@
-# pip install ultralytics os opencv-python
-
 import os
 from ultralytics import YOLO
 import cv2
-import torch
-import numpy as np
 
-# Load the YOLOv8 model
-try:
-    model = YOLO("runs/classify/train/weights/best.pt")  # Update with the correct path
-except Exception as e:
-    model = YOLO("models/best.pt")
+# Load the trained model
+model = YOLO('models/best.pt')
 
-dataset_folder = (
-    "bone-cancer-detection--1/test/cancer"  # Update with your dataset folder path
-)
+# Specify the path to your test images
+dataset_folder = 'bone-cancer-detection--1/test/normal'
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+# Make predictions
+results = model.predict(source=dataset_folder, conf=0.25)
 
-results = model.predict(source=dataset_folder, conf=0.25, device=device, verbose=False)
+# Create output directory for annotated images
+output_folder = 'classification_results'
+os.makedirs(output_folder, exist_ok=True)
 
-# Initialize counters for each class
-normal_count = 0
-cancer_count = 0
-
-# Process the results
+# Process and display results
 for result in results:
-    try:
-        # Assuming the prediction results have a 'names' attribute
-        predicted_class = result.names[np.argmax(result.probs.data.cpu().numpy())]
+    img_path = result.path  # Get the image path
+    img = cv2.imread(img_path)  # Load the image
 
-        if predicted_class == "normal":
-            normal_count += 1
-        elif predicted_class == "cancer":
-            cancer_count += 1
+    # Get the classification label and confidence
+    class_id = result.probs.top1  # Class ID with the highest probability
+    confidence = result.probs.top1conf  # Confidence of the class
+    label = f"{model.names[class_id]}: {confidence:.2f}"  # Class name and confidence
 
-    except Exception as e:
-        print(f"Error processing result: {e}")
+    # Annotate the image with the classification result
+    cv2.putText(img, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
+    # Save the annotated image to the output folder
+    output_path = os.path.join(output_folder, os.path.basename(img_path))
+    cv2.imwrite(output_path, img)
 
-total_images = normal_count + cancer_count
+    # Display the annotated image (optional)
+    cv2.imshow('Annotated Image', img)
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        break
 
-# Calculate the prediction percentages
-if total_images > 0:
-    normal_percentage = (normal_count / total_images) * 100
-    cancer_percentage = (cancer_count / total_images) * 100
-else:
-    normal_percentage = 0
-    cancer_percentage = 0
-
-print(f"Normal prediction: {normal_percentage:.2f}%")
-print(f"Cancer prediction: {cancer_percentage:.2f}%")
+cv2.destroyAllWindows()
