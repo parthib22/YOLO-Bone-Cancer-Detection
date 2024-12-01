@@ -9,6 +9,7 @@ This project uses YOLOv8 for bone cancer detection in medical images. It demonst
 - [Get Started](#-get-started)
 - [Training](#training)
 - [Prediction](#prediction)
+- [Results](#results)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 - [License](#-license)
