@@ -1,11 +1,11 @@
 # folders
-
 runs/
 bone-cancer-detection--1/
 classification_results/
 .venv/
+__pycache__/
+.idea
 
 # files
-
 .env
 models/yolov8n-cls.pt
