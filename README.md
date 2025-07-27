@@ -1,247 +1,363 @@
-# Bone Cancer Detection using YOLO
+# 🦴 YOLO Bone Cancer Detection
 
-This project uses YOLOv8 for bone cancer detection in medical images. It demonstrates how to set up, train, and use a YOLOv8 model for classifying bone images as either normal or cancerous.
+An AI-powered bone cancer detection system using YOLOv8 segmentation models. This project can detect and localize cancerous tissue in bone X-ray images with high accuracy.
 
-## Table of Contents
+## 🎯 What This Project Does
 
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Get Started](#-get-started)
-- [Training](#training)
-- [Prediction](#prediction)
-- [Results](#results)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
+- **Detects Cancer**: Identifies cancerous tissue in bone X-ray images
+- **Localizes Tumors**: Draws bounding boxes around detected cancer regions
+- **Confidence Scoring**: Provides confidence levels for each detection
+- **Batch Processing**: Processes multiple images at once
+- **Visual Results**: Saves annotated images with detection results
 
-## ✅ Prerequisites
+## 🚀 Quick Start (3 Simple Steps)
 
-- [Python 3.8 and above](https://www.python.org/downloads/)
+### Step 1: Download the Project
 
-### Windows
-- Windows 10 or 11
-- CUDA-capable GPU (recommended)
-- Microsoft Visual C++ Redistributable
+```bash
+git clone https://github.com/parthib22/YOLO-Bone-Cancer-Detection.git
+cd YOLO-Bone-Cancer-Detection
+```
 
-### Linux
-- Ubuntu 20.04/22.04 or compatible Linux distribution
-- GCC and build essentials
-- CUDA-capable GPU (recommended)
-- [NVIDIA CUDA Toolkit](https://developer.nvidia.com/cuda-downloads) (for GPU support)
+### Step 2: Set Up Environment
 
-### macOS
-- macOS 11 Big Sur or later
-- Apple Silicon M-series or Intel-based Mac
-- [Xcode Command Line Tools](https://www.freecodecamp.org/news/install-xcode-command-line-tools/)
+```bash
+# Create virtual environment
+python -m venv venv
 
-## ⤵️ Installation
+# Activate it (Windows)
+venv\Scripts\activate
 
-### 1. Create a project directory and open a terminal inside it.
+# Activate it (Mac/Linux)
+source venv/bin/activate
 
-### 2. The next step differs on your OS -
+# Install dependencies
+pip install -r requirements.txt
+```
 
-   - ### _Windows_
+### Step 3: Run Detection
 
-     **Optional**: Create a virtual environment:
-      ```powershell
-      python -m venv venv
-      .\venv\Scripts\activate
-      ```
+```bash
+# Put your X-ray images in the 'content' folder
+# Then run:
+python predict.py
+```
 
-   - ### _Linux_
+**That's it!** Your results will be in the `result` folder with detected cancer regions highlighted.
 
-      Install system dependencies:
-      ```bash
-      sudo apt-get update
-      sudo apt-get install python3-venv python3-dev git
-      ```
+## 📁 Project Structure
 
-      **Optional**: Create and activate a virtual environment:
-      ```bash
-      python3 -m venv venv
-      source venv/bin/activate
-      ```
+```
+YOLO-Bone-Cancer-Detection/
+├── content/           # 📂 Put your X-ray images here
+├── result/            # 📂 Processed images appear here
+├── models/            # 🤖 Pre-trained AI models
+│   ├── best.pt        # Segmentation model (detects cancer regions)
+│   └── better.pt      # Classification model (cancer/normal)
+├── predict.py         # 🔍 Main detection script
+├── train.py           # 🏋️ Training script
+├── main.py            # 🖼️ Visual demo script
+├── utils.py           # 🛠️ Utility functions
+└── requirements.txt   # 📋 Dependencies list
+```
 
-      **Optional**: Install CUDA Toolkit for GPU support:
-      ```bash
-      # For Ubuntu
-      wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
-      sudo dpkg -i cuda-keyring_1.0-1_all.deb
-      sudo apt-get update
-      sudo apt-get install cuda
-      ```
+## 🖥️ How to Use
 
-   - ### _macOS_
+### Option 1: Quick Detection (Recommended)
 
-      Install Homebrew (if not already installed):
-      ```bash
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      ```
+1. **Add Images**: Put your bone X-ray images in the `content/` folder
+2. **Run Detection**: Execute `python predict.py`
+3. **View Results**: Check the `result/` folder for annotated images
 
-      Install Python via Homebrew:
-      ```bash
-      brew install python
-      ```
+### Option 2: Interactive Demo
 
-      **Optional**: Create and activate a virtual environment:
-      ```bash
-      python3 -m venv venv
-      source venv/bin/activate
-      ```
+```bash
+python main.py
+```
 
-### 3. Install the required packages:
-   ```bash
-   pip install numpy torch roboflow ultralytics opencv-python
-   ```
+This opens a window showing each image with detections.
 
-## 🚀 Get Started
-
-### Dataset
-
-This project uses a dataset from Roboflow. To download the dataset.
-
-Get a private API key from [Roboflow](https://app.roboflow.com/)
+### Option 3: Custom Folders
 
 ```python
-from roboflow import Roboflow
-rf = Roboflow(api_key="YOUR_API_KEY")
-project = rf.workspace("normal-bones").project("bone-cancer-detection-xa7ru")
-version = project.version(1)
-dataset = version.download("folder")
+from predict import process_and_annotate_images
+
+# Use custom input/output folders
+process_and_annotate_images("my_images", "my_results")
 ```
 
-Feel free to use any other dataset (from Roboflow, etc.), or create a dataset of your own. Just maintain the following folder structure:
+## 📊 Sample Output
 
-```markdown
-yolov8_bone_cancer_detection
-├── custom_user_dataset
-│   ├── test
-│   │   ├── cancer
-│   │   └── normal
-│   ├── train
-│   │   ├── cancer
-│   │   └── normal
-│   └── valid
-│       ├── cancer
-│       └── normal
+When you run the detection, you'll see:
+
+```
+----------------------------------------
+Processing images from 'content' folder
+----------------------------------------
+----------------------------------------
+Processing | bone1.jpg | ...
+Cancerous tissue detected.
+Confidence: 95.2%
+----------------------------------------
+Processing | bone2.jpg | ...
+No cancerous tissue detected.
+----------------------------------------
+Annotated images saved in 'result' folder
+----------------------------------------
 ```
 
-### Training
+**Visual Results:**
 
-To train the YOLOv8 model:
+- 🔴 **Red boxes**: Detected cancer regions with confidence scores
+- 🟢 **Green label**: "not detected" when no cancer is found
+- 📁 **Saved files**: `filename-annotated.jpg` in the result folder
+
+## ⚙️ System Requirements
+
+### Minimum Requirements
+
+- **OS**: Windows 10+, macOS 11+, or Ubuntu 20.04+
+- **Python**: 3.8 or higher
+- **RAM**: 4GB minimum
+- **Storage**: 2GB free space
+
+### Recommended for Better Performance
+
+- **GPU**: NVIDIA GPU with CUDA support
+- **RAM**: 8GB or more
+- **CPU**: Multi-core processor
+
+### Installation by Operating System
+
+<details>
+<summary>🪟 <strong>Windows</strong></summary>
+
+```powershell
+# Install Python from python.org if not installed
+# Open Command Prompt or PowerShell
+
+# Clone project
+git clone https://github.com/parthib22/YOLO-Bone-Cancer-Detection.git
+cd YOLO-Bone-Cancer-Detection
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run detection
+python predict.py
+```
+
+</details>
+
+<details>
+<summary>🐧 <strong>Linux (Ubuntu/Debian)</strong></summary>
+
+```bash
+# Install dependencies
+sudo apt update
+sudo apt install python3 python3-pip python3-venv git
+
+# Clone project
+git clone https://github.com/parthib22/YOLO-Bone-Cancer-Detection.git
+cd YOLO-Bone-Cancer-Detection
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run detection
+python predict.py
+```
+
+</details>
+
+<details>
+<summary>🍎 <strong>macOS</strong></summary>
+
+```bash
+# Install Homebrew if not installed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Python
+brew install python
+
+# Clone project
+git clone https://github.com/parthib22/YOLO-Bone-Cancer-Detection.git
+cd YOLO-Bone-Cancer-Detection
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run detection
+python predict.py
+```
+
+</details>
+
+## 🧠 Understanding the AI Models
+
+This project includes two types of AI models:
+
+### 1. Segmentation Model (`models/best.pt`) - **Main Model**
+
+- **Purpose**: Detects and localizes cancer regions
+- **Output**: Bounding boxes around cancerous tissue
+- **Use Case**: Detailed analysis showing exactly where cancer is located
+
+### 2. Classification Model (`models/better.pt`) - **Alternative**
+
+- **Purpose**: Classifies entire image as cancer/normal
+- **Output**: Single prediction for the whole image
+- **Use Case**: Quick screening of images
+
+## 🔧 Troubleshooting
+
+### Common Issues & Solutions
+
+<details>
+<summary><strong>❌ "ModuleNotFoundError" or Import Errors</strong></summary>
+
+**Solution:**
+
+```bash
+# Make sure virtual environment is activated
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
+
+# Reinstall dependencies
+pip install -r requirements.txt
+```
+
+</details>
+
+<details>
+<summary><strong>❌ "No images found in content folder"</strong></summary>
+
+**Solution:**
+
+1. Create a `content` folder in the project directory
+2. Add your X-ray images (.jpg, .png, .jpeg, .bmp, .tiff files)
+3. Make sure images are valid and not corrupted
+</details>
+
+<details>
+<summary><strong>❌ GPU/CUDA Issues</strong></summary>
+
+**Solution:**
+The project automatically uses CPU if GPU is not available. For GPU support:
+
+**Windows/Linux with NVIDIA GPU:**
+
+```bash
+# Check if CUDA is available
+python -c "import torch; print(torch.cuda.is_available())"
+
+# If False, install CUDA-enabled PyTorch
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+```
+
+</details>
+
+<details>
+<summary><strong>❌ "Permission denied" errors</strong></summary>
+
+**Solution:**
+
+```bash
+# On Linux/Mac, you might need permissions
+chmod +x predict.py
+
+# Or run with python explicitly
+python predict.py
+```
+
+</details>
+
+### Getting Help
+
+If you encounter issues:
+
+1. **Check the error message** - it usually tells you what's wrong
+2. **Verify your Python version**: `python --version` (should be 3.8+)
+3. **Make sure virtual environment is activated**
+4. **Try reinstalling dependencies**: `pip install -r requirements.txt --force-reinstall`
+
+## 🏋️ Advanced Usage
+
+### Training Your Own Model
+
+If you want to train with your own data:
 
 ```python
-from ultralytics import YOLO
-import torch
-
-# Use a GPU if available else CPU
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# Load a pretrained YOLOv8 classification model
-model = YOLO('yolov8n-cls.pt')
+# 1. Prepare your dataset in YOLO format
+# 2. Update the dataset path in train.py
+# 3. Run training
+python train.py
 ```
 
-Find more YOLOv8 classification models [here](https://docs.ultralytics.com/models/yolov8/#__tabbed_1_4).
+### Analyzing Model Performance
 
 ```python
-# Train the model with your dataset
-model.train(data='bone-cancer-detection--1', epochs=50, imgsz=224, batch=16, device=device)
+# Analyze model metrics and performance
+python utils.py
 ```
 
-After training, a folder is created in the root directory with all the information about the training.
-
-```markdown
-runs/
-└── classify/
-    └── train/
-        ├── weights/
-        │   ├── best.pt
-        │   └── last.pt
-        ├── args.yaml
-        ├── confusion_matrix.png
-        ├── confusion_matrix_normalized.png
-        ├── results.csv
-        ├── results.png
-        ├── train_batch0.jpg
-        ├── train_batch1.jpg
-        ├── train_batch2.jpg
-        ├── val_batch0_labels.jpg
-        ├── val_batch0_pred.jpg
-        ├── val_batch1_labels.jpg
-        ├── val_batch1_pred.jpg
-        ├── val_batch2_labels.jpg
-        └── val_batch2_pred.jpg
-```
-
-In the directory ```runs/classify/train/weights```, the models are created. We will be using the ```best.pt``` model.
-
-### Prediction
-
-To make predictions using the trained model:
+### Batch Processing Large Datasets
 
 ```python
-from ultralytics import YOLO
+from predict import process_and_annotate_images
 
-# Load the trained model
-model = YOLO('path/to/best.pt')
-
-# Specify the path to your test images
-dataset_folder = 'bone-cancer-detection--1/test/cancer'
-
-# Make predictions
-results = model.predict(source=dataset_folder, conf=0.25)
+# Process hundreds of images
+process_and_annotate_images("large_dataset_folder", "results_folder")
 ```
 
-### Results
+## 📈 Model Performance
 
-Additionally, you can visualize and store the results as labelled images.
+- **Accuracy**: High precision in detecting cancerous regions
+- **Speed**: Processes images in real-time
+- **Reliability**: Pre-trained on medical imaging datasets
 
-```python
-import os
-import cv2
+## 🤝 Contributing
 
-for result in results:
+Want to improve the project?
 
-    # Load the image
-    img_path = result.path
-    img = cv2.imread(img_path)
+1. Fork the repository
+2. Create a feature branch
+3. Make your improvements
+4. Submit a pull request
 
-    # Class with the highest probability and it's confidence
-    class_id, confidence = result.probs.top1, result.probs.top1conf
-    
-    # Get the classification label and confidence on the image
-    label = f"{model.names[class_id]}: {confidence:.2f}"
+Ideas for contributions:
 
-    # Annotate the image with the classification result
-    cv2.putText(img, label, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+- Support for different image formats
+- Web interface for easier use
+- Mobile app version
+- Additional AI models
+- Performance optimizations
 
-    # Save the annotated image to the output folder
-    output_path = os.path.join("path/to/output/folder", os.path.basename(img_path))
-    cv2.imwrite(output_path, img)
+## 📄 License
 
-    # Display the annotated image (optional)
-    cv2.imshow('Annotated Image', img)
-    if cv2.waitKey(0) & 0xFF == ord('q'):
-        break
+This project is open-source under the [MIT License](LICENSE). Feel free to use, modify, and distribute.
 
-cv2.destroyAllWindows()
-```
+## 🆘 Support
 
-## ⚙️ Troubleshooting
+- **Issues**: Report bugs on [GitHub Issues](https://github.com/parthib22/YOLO-Bone-Cancer-Detection/issues)
+- **Discussions**: Ask questions in [GitHub Discussions](https://github.com/parthib22/YOLO-Bone-Cancer-Detection/discussions)
 
-### GPU Support
-- **Windows/Linux**: Ensure CUDA is correctly installed and compatible with your NVIDIA GPU (if available)
-- **macOS**: For M-series Macs, ensure you're using a PyTorch version with Metal Performance Shaders (MPS) support
+---
 
-### Common Installation Issues
-- Use a virtual environment to avoid package conflicts
-- Verify Python and pip versions before installation
-- Check CUDA and GPU driver compatibility
+**⚠️ Medical Disclaimer**: This tool is for research and educational purposes only. It should not be used as a substitute for professional medical diagnosis. Always consult with qualified medical professionals for actual medical decisions.
 
-## 🚩 Contributing
-
-Contributions to this project are welcome. Please feel free to submit a Pull Request.
-
-## 🔱 License
-
-This project is open-source and available under the [MIT License](LICENSE).
+**Made with ❤️ for the medical AI community**

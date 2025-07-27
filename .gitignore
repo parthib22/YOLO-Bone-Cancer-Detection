@@ -1,6 +1,6 @@
 # folders
 runs/
-bone-cancer-detection--1/
+BONE-CANCER-SEGMENTATION-1/
 classification_results/
 .venv/
 __pycache__/

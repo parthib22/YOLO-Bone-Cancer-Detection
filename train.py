@@ -1,14 +1,18 @@
 from ultralytics import YOLO
-from utils import available_hardware
+from utils import available_hardware, download_dataset
+
+# Ensure the dataset is downloaded before training
+# Skip if you already have another dataset
+download_dataset()
 
 device = available_hardware()
 
-# Load a pretrained YOLOv8 classification model
-model = YOLO("models/yolov8n-cls.pt") # This will automatically download the model if not found in the directory
+# Load a pretrained YOLOv11 segmentation model
+model = YOLO(
+    "yolov11n-seg.pt"
+)  # This will automatically download the segmentation model if not found
 
-train_dataset = "bone-cancer-detection--1"
+dataset_path = "BONE-CANCER-SEGMENTATION-1"  # change the dataset path as needed
 
-# Train the model with your custom dataset
-model.train(
-    data=train_dataset, val=True, epochs=10, imgsz=224, batch=16, device=device
-)
+# Train the model with your custom dataset for segmentation
+model.train(data=dataset_path, val=True, epochs=50, imgsz=640, batch=16, device=device)

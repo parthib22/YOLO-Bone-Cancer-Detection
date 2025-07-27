@@ -1,21 +1,22 @@
 import torch
 
-# Fetching environment variable (API key)
+api_key = "ROBOFLOW_API_KEY"
 
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-api_key = os.getenv("ROBOFLOW_API_KEY")
 
 def download_dataset():
     # Using roboflow to download the dataset
-
+    import os
     from roboflow import Roboflow
+
     rf = Roboflow(api_key=api_key)
-    project = rf.workspace("normal-bones").project("bone-cancer-detection-xa7ru")
+    project = rf.workspace(
+        "modern-academy-for-engineering-and-technology-u9m8v"
+    ).project("bone-cancer-segmentation")
     version = project.version(1)
-    dataset = version.download("folder")
+    dataset = version.download("yolov8")
+
+    print(f"Dataset downloaded successfully.")
+
 
 def available_hardware(log=True):
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -31,4 +32,3 @@ def available_hardware(log=True):
         print("Device available to use: ", device)
 
     return device
-
